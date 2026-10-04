@@ -55,8 +55,8 @@ val anatoliiCv: Cv = cv {
     social {
         row {
             phone("+357 974 33 973")
-            telegram("ttaaa_work")
             email("tolik.ttaaa@gmail.com")
+            telegram("ttaaa_work")
         }
         row {
             linkedin("ttaaa")
