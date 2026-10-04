@@ -9,8 +9,8 @@ import cv.model.Organization
 internal fun CvBuilder.personalProjectsSection() =
     projects(title = "Personal projects", icon = "faLaptop", webTitle = "Personal Projects") {
         project(
-            name = "cv-dsl",
-            company = Organization("github.com/tolikttaaa/cv-dsl", url = "https://github.com/tolikttaaa/cv-dsl"),
+            name = "Kotlin DSL for CV generation",
+            company = Organization("cv-dsl", url = "https://github.com/tolikttaaa/cv-dsl"),
             dates = "2026",
             tags = listOf("Kotlin", "Kotlin DSL", "Gradle Plugin", "LuaLaTeX", "HTML", "JUnit 5", "GitHub Actions"),
         ) {
