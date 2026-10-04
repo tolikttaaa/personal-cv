@@ -2,6 +2,7 @@ package cv.content
 
 import cv.dictionaries.Companies
 import cv.dsl.CvBuilder
+import cv.model.CodeHost
 import cv.model.Organization
 
 /** The "Personal projects" section: side projects worth showing off. */
@@ -10,7 +11,7 @@ internal fun CvBuilder.personalProjectsSection() =
     projects(title = "Personal projects", icon = "faLaptop", webTitle = "Personal Projects") {
         project(
             name = "Kotlin DSL for CV generation",
-            company = Organization("github.com/tolikttaaa/cv-dsl", url = "https://github.com/tolikttaaa/cv-dsl"),
+            company = Organization.repository(CodeHost.GITHUB, "tolikttaaa", "cv-dsl"),
             dates = "2026",
             tags = listOf("Kotlin", "Kotlin DSL", "Gradle Plugin", "LuaLaTeX", "HTML", "JUnit 5", "GitHub Actions"),
         ) {
