@@ -14,11 +14,12 @@ internal fun CvBuilder.summarySection() = summary(title = "Summary", icon = "faU
     )
     paragraph(
         """
-        Worked in multiple teams at Azul, Yandex, and Tinkoff, contributing to mission-critical services,
+        Worked in multiple teams at Hytech, Azul, Yandex, and Tinkoff, contributing to mission-critical services,
         CI/CD pipelines, monitoring dashboards, and automation frameworks. Passionate about clean code,
         maintainable architecture, and continuous learning.
         """,
     ) {
+        bold("Hytech")
         bold("Azul")
         bold("Yandex")
         bold("Tinkoff")

@@ -8,6 +8,7 @@ import cv.model.Organization
  * (and updated) in exactly one place. See also [Universities] and [Schools].
  */
 internal object Companies {
+    val HYTECH = Organization("Hytech", url = "https://www.hytechc.com/")
     val AZUL = Organization("Azul", url = "https://www.azul.com/")
     val YANDEX = Organization("Yandex", url = "https://yandex.com/company")
     val TINKOFF = Organization("Tinkoff", url = "https://www.tinkoff.ru/software/")
