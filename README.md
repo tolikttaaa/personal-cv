@@ -3,11 +3,12 @@
 A Kotlin DSL is the single source of truth for this CV. The project renders the
 same immutable model into:
 
-- a LuaLaTeX document and PDF;
+- a LuaLaTeX document and PDF, at most two pages long;
 - a static portfolio site with no intermediate JSON or runtime data fetch.
 
-GitHub Actions verifies the Kotlin code, compiles the PDF, assembles the site,
-and deploys it to GitHub Pages.
+GitHub Actions verifies the Kotlin code, compiles the PDF, checks its page
+layout, assembles the site, and deploys it to GitHub Pages:
+<https://tolikttaaa.github.io/personal-cv/>.
 
 ## Project layout
 
@@ -103,7 +104,8 @@ the target is `latex` or `web`. It owns the complete pipeline:
 
 - `verifyCvEnvironment` checks LuaLaTeX and the JDK `jwebserver` executable;
 - `generateLatex` and `generateWeb` invoke the consumer's generator;
-- `generatePdf` verifies tools, generates LaTeX, and runs LuaLaTeX twice;
+- `generatePdf` verifies tools, generates LaTeX, runs LuaLaTeX twice, and
+  checks the PDF against its [layout rules](#pdf-layout);
 - `assembleSite` combines generated web files and the PDF;
 - `serveSite` and `stopSite` manage a PID-tracked local preview process.
 
@@ -166,6 +168,34 @@ social {
 }
 ```
 
+### PDF layout
+
+The PDF must stay within two pages, with the whole Experience section on page 1.
+Both are declared in the content and checked on every PDF build:
+
+```kotlin
+pdf {
+    fontSize = 9.0 // pt; every other size scales with it
+    maxPages = 2
+}
+
+experience(title = "Experience", icon = "faSuitcase", id = "experience", pageFit = PageFit.OnPage(1)) { … }
+```
+
+Any section or entry accepts `pageFit = PageFit.OnPage(n)` (entirely on page
+`n`) or `PageFit.SinglePage` (never split by a page break). When a change breaks
+a rule, `generatePdf` fails and lists each violation:
+
+```text
+PDF layout: 3 pages, 2 of 2 page rules violated:
+  - The PDF has 3 pages, but is limited to 2
+  - Experience must fit on page 1, but occupies pages 1–2
+```
+
+`build/cv.pdf` is still written for inspection, and `build/cv-layout.txt` shows
+the page of every section and entry. Shorten the content or lower `fontSize`
+until the rules hold again.
+
 ## Building locally
 
 Requirements:
@@ -182,7 +212,7 @@ Important tasks:
 | `detekt` | Run static analysis only | `<module>/build/reports/detekt/` |
 | `verifyCvEnvironment` | Check LuaLaTeX and `jwebserver` | Diagnostic output |
 | `generateLatex` | Render the DSL to LaTeX sources | `build/latex/` |
-| `generatePdf` | Render and compile the PDF in two passes | `build/cv.pdf` |
+| `generatePdf` | Render and compile the PDF in two passes, check its layout rules | `build/cv.pdf`, `build/cv-layout.txt` |
 | `generateWeb` | Render complete HTML and extract browser assets | `build/web/` |
 | `assembleSite` | Combine the portfolio, photo and PDF | `build/site/` |
 | `serveSite` | Assemble and serve the site on port 8080 | Local HTTP server |
@@ -208,12 +238,27 @@ on `PATH`, override it with `-PlualatexPath=/absolute/path/to/lualatex`.
 The preview server uses the JDK's `jwebserver`, records its PID in
 `build/site-server.pid`, and writes output to `build/site-server.log`.
 
+### Developing against a local cv-dsl
+
+Changes that need a new library feature can be built against a local checkout
+of [`cv-dsl`](https://github.com/tolikttaaa/cv-dsl) before it is released:
+
+```sh
+./gradlew generatePdf -PcvDslPath=../cv-dsl
+```
+
+The included build replaces the pinned JitPack artifact on both the plugin
+classpath and the application classpath.
+
 ## Version management
 
-`gradle.properties` pins one `cvDslVersion` tag for both the build-script plugin
-classpath and the application dependency. Update that property only after the
-standalone repository's release CI is green and its immutable JitPack artifact
-is available. Build-tool versions remain in `gradle/libs.versions.toml`.
+`gradle.properties` pins one `cvDslVersion` for both the build-script plugin
+classpath and the application dependency. It normally names a release tag;
+update it only after the standalone repository's release CI is green and its
+immutable JitPack artifact is available. While a cv-dsl pull request is under
+review, a branch here may pin that PR's commit hash instead, which JitPack
+builds on demand. Build-tool versions remain in `gradle/libs.versions.toml` and
+follow the versions cv-dsl is built with.
 
 Detekt runs with its default rule set, reports in Checkstyle, HTML, SARIF and
 Markdown formats, and is part of every `check` invocation. Narrow suppressions
@@ -221,12 +266,14 @@ are used only for intentionally declarative DSL structures.
 
 ## Deployment
 
-Every push to `main`, and every manual workflow dispatch, performs:
+Every pull request, push to `main` and manual dispatch runs, inside a full
+TeX Live container:
 
 1. `./gradlew check`;
 2. generation of LaTeX and the static portfolio;
-3. PDF compilation with LuaLaTeX;
-4. assembly of `build/site`;
-5. deployment to the `gh-pages` branch.
+3. PDF compilation with LuaLaTeX and verification of its layout rules;
+4. assembly of `build/site`.
 
-GitHub Pages serves the contents of that branch from its root.
+The PDF, its layout report and the LuaLaTeX log are uploaded as the
+`cv-layout` artifact. Pushes to `main` then deploy `build/site` to the
+`gh-pages` branch, which GitHub Pages serves from its root.

@@ -30,6 +30,10 @@ import cv.model.Cv
  * ```
  * Available styles: bold, italic, nowrap, colored(CvColor.X), linkTo(url).
  * A rule that matches nothing fails the build.
+ *
+ * Page rules keep the PDF in shape: `pdf { maxPages }` bounds its length, and
+ * any section or entry can take `pageFit = PageFit.OnPage(n)` (entirely on
+ * page n) or `PageFit.SinglePage` (never split across pages).
  */
 val anatoliiCv: Cv = cv {
     firstName = "Anatolii"
@@ -38,6 +42,15 @@ val anatoliiCv: Cv = cv {
     photo(file = "photo.jpg", size = "2.2cm")
     footerText = "Anatolii Anishchenko — CV"
     hyphenation = false // words always wrap whole; no per-word nowrap needed
+
+    // PDF print settings. Every font size scales with fontSize. generatePdf
+    // fails when the PDF exceeds maxPages or breaks a section's pageFit rule
+    // (Experience must stay on page 1), listing each violation and the pages
+    // every element landed on (build/cv-layout.txt).
+    pdf {
+        fontSize = 9.0
+        maxPages = 2
+    }
 
     social {
         row {

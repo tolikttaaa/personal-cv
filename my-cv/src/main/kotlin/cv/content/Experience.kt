@@ -2,10 +2,59 @@ package cv.content
 
 import cv.dictionaries.Companies
 import cv.dsl.CvBuilder
+import cv.model.PageFit
 
-/** The "Experience" section: employment history, most recent first. */
+/**
+ * The "Experience" section: employment history, most recent first. The whole
+ * section must stay on the first page of the PDF; `generatePdf` fails otherwise.
+ */
 @Suppress("LongMethod") // Declarative CV content is intentionally kept as one chronological section.
-internal fun CvBuilder.experienceSection() = experience(title = "Experience", icon = "faSuitcase", id = "experience") {
+internal fun CvBuilder.experienceSection() = experience(
+    title = "Experience",
+    icon = "faSuitcase",
+    id = "experience",
+    pageFit = PageFit.OnPage(1),
+) {
+    work(
+        role = "Senior QA Automation Engineer",
+        company = Companies.HYTECH,
+        location = "Limassol, Cyprus",
+        dates = "June 2026 – Present",
+        tags = listOf(
+            "Java", "JUnit 5", "Mockito", "Allure TestOps", "Camunda", "Kafka", "Spring Framework",
+            "ClickHouse", "AWS", "GitLab CI", "Kubernetes", "Grafana",
+        ),
+    ) {
+        paragraph(
+            """
+            Own quality assurance and quality control of the core product services of an anti-fraud platform:
+            Java backend services integrated through Kafka and Camunda. Run the team's QA processes, test the
+            Camunda rule-based decision-making process, and provide test data for the integrated services team.
+            """,
+        )
+        bullets {
+            item(
+                """
+                Built a test automation framework from scratch (Java, JUnit 5, Allure TestOps) and an
+                automation-first approach, keeping test automation coverage and success rate up to 90%.
+                """,
+            ) {
+                bold("up to 90%")
+            }
+            item(
+                """
+                Implemented CI pipelines and code review rules for test automation; introduced production health
+                checks for critical services.
+                """,
+            )
+            item(
+                """
+                Ran end-to-end tests together with other teams; conduct technical interviews and created the
+                technical screening documentation.
+                """,
+            )
+        }
+    }
     work(
         role = "Backend Software Engineer",
         company = Companies.AZUL,
@@ -114,8 +163,8 @@ internal fun CvBuilder.experienceSection() = experience(title = "Experience", ic
         bullets {
             item(
                 """
-                Time-to-market for new promotions reduced from days to hours, eliminating dependency
-                on engineering team.
+                Time-to-market for new promotions reduced from days to hours, removing dependency
+                on the engineering team.
                 """,
             ) {
                 bold("reduced from days to hours")

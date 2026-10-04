@@ -10,12 +10,12 @@ internal fun CvBuilder.skillsSection() =
         entry(
             "Frameworks & Libraries",
             listOf(
-                "Spring Framework", "JUnit", "Mockito", "Allure TestOps", "Swagger", "JaCoCo",
+                "Spring Framework", "JUnit", "Mockito", "Allure TestOps", "Camunda", "Swagger", "JaCoCo",
                 "Gradle", "Maven", "Quartz", "Prometheus", "Micrometer", "Selenium", "Selenide",
                 "TestContainers", "WireMock",
             ),
         )
-        entry("Databases & Storage", listOf("PostgreSQL", "MongoDB", "AWS RDS", "S3"))
+        entry("Databases & Storage", listOf("PostgreSQL", "MongoDB", "ClickHouse", "AWS RDS", "S3"))
         entry("Messaging & Streaming", listOf("Apache Kafka", "Apache Artemis", "AWS SQS"))
         entry("Cloud & Infrastructure", listOf("AWS", "Kubernetes", "Docker", "Helm"))
         entry("Protocols & Formats", listOf("JSON", "YAML", "Protobuf", "XML", "WSDL", "REST"))
